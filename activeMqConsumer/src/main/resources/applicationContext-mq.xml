@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans    
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context 
+     	http://www.springframework.org/schema/context/spring-context-4.0.xsd
+     	http://www.springframework.org/schema/util
+     	http://www.springframework.org/schema/util/spring-util-4.0.xsd
+        http://www.springframework.org/schema/aop
+	 	http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+	 	http://www.springframework.org/schema/tx
+	 	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	 	http://www.springframework.org/schema/jms 
+	 	http://www.springframework.org/schema/jms/spring-jms-4.0.xsd">
+
+	<!-- 配置ConnectionFactory -->
+	<!-- 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供 -->
+	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://192.168.220.130:61616" />
+		<property name="userName" value="admin" />
+		<property name="password" value="admin" />
+	</bean>
+
+	<!-- 连接池配置 -->
+	<bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+		destroy-method="stop">
+		<property name="connectionFactory" ref="targetConnectionFactory"/>
+	</bean>
+
+	<!-- 定义JMS Template的主题消息队列 -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory"/>
+		<property name="defaultDestination" ref="destination" /> 
+	</bean>
+
+	<!-- 定义Spring JMS Template的queue -->
+	<bean id="queuejmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<!-- 目标：queue消息队列 -->
+		<property name="defaultDestination" ref="queuedestination" /> 
+	</bean>
+	
+	<!-- 发送消息的目的地（一个队列） -->
+	<bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">
+		<!-- 设置消息队列的名字 -->
+		<constructor-arg index="0" value="subject" />
+	</bean>
+
+	<bean id="queuedestination" class="org.apache.activemq.command.ActiveMQQueue">
+		<!-- 设置消息队列的名字 -->
+		<constructor-arg index="0" value="mytest" />
+	</bean>
+	
+	<!-- 启动监听接收消息 -->
+	<bean id="consumerListener" class="com.hai.listener.ConsumerListener" />
+
+	<bean id="consumerListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="destination" ref="destination" />
+		<!--  -->
+		<property name="messageListener" ref="consumerListener" />
+		<!-- 启动jms事务 -->
+		<property name="sessionTransacted" value="true"/>
+	</bean>
+	
+	
+	<!-- 启动监听接收消息 -->
+	<bean id="consumerListenerQueue" class="com.hai.listener.ConsumerListenerQueue" />
+
+	<bean id="consumerListenerContainerQueue"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="destination" ref="queuedestination" />
+		<property name="messageListener" ref="consumerListenerQueue" />
+		<property name="sessionTransacted" value="true"/>
+	</bean>
+	
+	<!-- 启动监听2接收消息 -->
+	<bean id="consumerListenerQueue2" class="com.hai.listener.ConsumerListenerQueue2" />
+
+	<bean id="consumerListenerContainerQueue2"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="destination" ref="queuedestination" />
+		<property name="messageListener" ref="consumerListenerQueue2" />
+		<property name="sessionTransacted" value="true"/>
+	</bean>
+</beans>
