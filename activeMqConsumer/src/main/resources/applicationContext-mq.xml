@@ -43,6 +43,7 @@
 		<property name="connectionFactory" ref="jmsFactory" />
 		<!-- 目标：queue消息队列 -->
 		<property name="defaultDestination" ref="queuedestination" /> 
+		<property name="sessionAcknowledgeMode" value="1" />   
 	</bean>
 	
 	<!-- 发送消息的目的地（一个队列） -->

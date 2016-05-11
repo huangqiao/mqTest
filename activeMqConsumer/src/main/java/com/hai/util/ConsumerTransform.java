@@ -13,7 +13,8 @@ import org.springframework.jms.core.JmsTemplate;
  * 消息题的内容定义
  * 消息对象 接收消息对象后： 接收到的消息体* <p> 
  */
-public class Consumer2 {
+
+public class ConsumerTransform {
     
     /**
      * @param args
@@ -22,12 +23,29 @@ public class Consumer2 {
     	System.out.println("初始化消息消费者");
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext-mq.xml");
         JmsTemplate template = (JmsTemplate) applicationContext.getBean("jmsTemplate");  
+//        Destination destination = (Destination) applicationContext.getBean("destination");  
+        while (true) {  
+                TextMessage txtmsg = (TextMessage) template.receive();  
+					try {
+						 if (null != txtmsg){
+							 System.out.println("消费者1： topic 内容为: " + txtmsg.getText());
+						 }else{
+							 break; 
+						 }	
+					} catch (JMSException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        }  
+        
+        
+        JmsTemplate queuetemplate = (JmsTemplate) applicationContext.getBean("queuejmsTemplate");  
         Destination destination = (Destination) applicationContext.getBean("destination");  
 //        while (true) {  
-//                TextMessage txtmsg = (TextMessage) template.receive(destination);  
+//                TextMessage txtmsg = (TextMessage) queuetemplate.receive();  
 //					try {
 //						 if (null != txtmsg){
-//							 System.out.println("消费者2：手动收到消息内容为: " + txtmsg.getText());
+//							 System.out.println("消费者1： queue 手动: " + txtmsg.getText());
 //						 }else{
 //							 break; 
 //						 }	
@@ -35,8 +53,7 @@ public class Consumer2 {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
-//        }  
-        
+//        } 
        
     }
 

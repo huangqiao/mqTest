@@ -18,7 +18,11 @@ public class ConsumerListenerQueue implements MessageListener{
        if(message instanceof TextMessage){
 			TextMessage tm = (TextMessage) message;
 			try {
-				System.out.println("-----来自对服务器监听的消息:"+tm.getText());
+				if(1==1){
+//					System.out.println("-----来自对服务器监听的消息:"+tm.getText());
+					System.out.println("-----来自对服务器监听的消息:"+tm.getText());
+					throw new RuntimeException();
+				}
 			} catch (JMSException e) {
 				log.error("消费者接受消息异常！",e);
 			}
