@@ -1,4 +1,4 @@
-package com.hai.util;
+package com.hq.util;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;

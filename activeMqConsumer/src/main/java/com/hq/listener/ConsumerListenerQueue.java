@@ -1,4 +1,4 @@
-package com.hai.listener;
+package com.hq.listener;
 
 import javax.jms.JMSException;
 import javax.jms.Message;

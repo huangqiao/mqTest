@@ -1,4 +1,4 @@
-package com.hai.listener;
+package com.hq.listener;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -9,18 +9,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
-public class ConsumerListener implements MessageListener{
+public class ConsumerListenerQueue2 implements MessageListener{
 
-	private static Log log = LogFactory.getLog(ConsumerListener.class);
+	private static Log log = LogFactory.getLog(ConsumerListenerQueue2.class);
 	
 	@Override
 	public void onMessage(Message message) {
        if(message instanceof TextMessage){
 			TextMessage tm = (TextMessage) message;
 			try {
-				System.out.println("-----来自对服务器监听的消息:"+tm.getText());
+				System.out.println("2222222-----来自对服务器监听的消息:"+tm.getText());
 			} catch (JMSException e) {
-				log.error("消费者接受消息异常！");
+				log.error("消费者接受消息异常！",e);
 			}
 		}
 	}
